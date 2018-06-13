@@ -21,7 +21,10 @@ test('model', function(assert) {
         reportModel = {
           id: 1,
           request: {
-            serialize: () => serializedRequest
+            serialize: () => serializedRequest,
+            clone() {
+              return this;
+            }
           },
           visualization: {
             type: 'table',
@@ -69,6 +72,52 @@ test('model', function(assert) {
   });
 });
 
+test('correct request set in visualization', function(assert) {
+  assert.expect(1);
+
+  const factServiceResponse = 'bar',
+        reportModel = {
+          id: 1,
+          request: {
+            dimensions: ['d1'],
+            metrics: ['m1'],
+            serialize() { return this; },
+            clone() {
+              return {
+                dimensions: ['d1'],
+                metrics: ['m1']
+              };
+            }
+          },
+          visualization: {
+            type: 'table',
+            isValidForRequest: () => false, // Test invalid config case
+            rebuildConfig(request, response) {
+              assert.deepEqual(request,
+                {
+                  dimensions: ['d1'],
+                  metrics: ['m1']
+                },
+                'Altering the original request does not change the request sent to the visualization');
+            }
+          }
+        };
+
+  let route = this.subject({
+    modelFor: () => reportModel,
+    facts: {
+      fetch(request, options) {
+        request.metrics.push('m2'); //Add a metric to the request
+        request.dimensions.push('d2'); //Add a dimension to the request
+
+        return Ember.RSVP.resolve({ response: factServiceResponse });
+      }
+    }
+  });
+
+  Ember.run(() => route.model());
+});
+
 test('invalid visualization', function(assert) {
   assert.expect(1);
 
@@ -95,7 +144,7 @@ test('invalid visualization', function(assert) {
 test('runReport action', function(assert) {
   assert.expect(2);
 
-  let request = { serialize: () => 'foo' },
+  let request = { serialize: () => 'foo', clone() { return this; }},
       parentModel = {
         request
       },

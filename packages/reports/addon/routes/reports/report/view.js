@@ -43,7 +43,7 @@ export default Ember.Route.extend({
   model() {
     let report = get(this, 'parentModel'),
         request = get(report, 'request'),
-        preFetchRequest = request.clone(),
+        preFetchRequest = request.clone(), //The request can be changed before the response is returned. This will make sure the request in the visualization matches the one in the response
         serializedRequest = request.serialize(),
         requestOptions = $.extend(true, get(this, 'requestOptions'), {
           customHeaders: {
