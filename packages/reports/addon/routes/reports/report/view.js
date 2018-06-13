@@ -43,6 +43,7 @@ export default Ember.Route.extend({
   model() {
     let report = get(this, 'parentModel'),
         request = get(report, 'request'),
+        preFetchRequest = request.clone(),
         serializedRequest = request.serialize(),
         requestOptions = $.extend(true, get(this, 'requestOptions'), {
           customHeaders: {
@@ -55,7 +56,7 @@ export default Ember.Route.extend({
       .then(response => {
         set(this, 'previousRequest', serializedRequest);
         this._setValidVisualizationType(request, report);
-        this._setValidVisualizationConfig(request, report, response.response);
+        this._setValidVisualizationConfig(preFetchRequest, report, response.response);
 
         return response.response;
       }).catch(response => {
