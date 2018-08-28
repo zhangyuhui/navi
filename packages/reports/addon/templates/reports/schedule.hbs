@@ -1,0 +1,23 @@
+{{#liquid-tether
+  stack="modal-dialog"
+  index=1
+
+  target="document.body"
+  targetModifier="visible"
+  attachment="middle-center"
+}}
+Test
+  {{!-- {{#common-actions/schedule
+      model=report
+      classNames='navi-reports-index__report-control schedule'
+      disabled=false
+      onSave=(route-action 'saveDeliveryRule')
+      onRevert=(route-action 'revertDeliveryRule')
+      onDelete=(route-action 'deleteDeliveryRule')
+      classNameBindings='item.request.validations.isTruelyValid::navi-report__action--is-disabled'
+  }}
+      {{#tooltip-on-component}}
+          {{if item.request.validations.isTruelyValid 'Schedule the report' 'Validate report to enable scheduling'}}
+      {{/tooltip-on-component}}
+  {{/common-actions/schedule}} --}}
+{{/liquid-tether}}

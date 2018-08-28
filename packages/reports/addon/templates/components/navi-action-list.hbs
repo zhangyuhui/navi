@@ -49,7 +49,7 @@
     {{!-- Check if user is the owner of the report --}}
     {{#if report.isOwner}}
         {{!-- Schedule only enabled for an owned report and if it valid--}}
-        {{#if (feature-flag 'enableScheduleReports')}}
+        {{!-- {{#if (feature-flag 'enableScheduleReports')}}
             {{#common-actions/schedule
                 model=report
                 classNames='navi-reports-index__report-control schedule'
@@ -63,7 +63,7 @@
                     {{if item.request.validations.isTruelyValid 'Schedule the report' 'Validate report to enable scheduling'}}
                 {{/tooltip-on-component}}
             {{/common-actions/schedule}}
-        {{/if}}
+        {{/if}} --}}
         {{!-- Delete Action enabled on an owned report --}}
         {{#common-actions/delete
             classNames='navi-reports-index__report-control delete'

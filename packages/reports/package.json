@@ -82,7 +82,8 @@
     "ember-truth-helpers": "^2.0.0",
     "ember-uuid": "^1.0.0",
     "ember-validators": "^1.1.1",
-    "liquid-fire": "^0.29.2",
+    "liquid-fire": "^0.29.5",
+    "liquid-tether": "^2.0.7",
     "loader.js": "^4.2.3",
     "navi-core": "^0.0.0",
     "navi-data": "^0.0.0"

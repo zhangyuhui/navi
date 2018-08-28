@@ -9,6 +9,7 @@ const Router = EmberRouter.extend({
 Router.map(function() {
   this.route('reports', function() {
     this.route('new');
+    this.route('schedule');
     this.route('report', { path: '/:reportId'}, function() {
       this.route('clone');
       this.route('save-as');

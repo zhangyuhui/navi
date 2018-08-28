@@ -1,13 +1,13 @@
 {{!-- Copyright 2018, Yahoo Holdings Inc. Licensed under the terms of the MIT license. See accompanying LICENSE.md file for terms. --}}
 
 {{!-- Check if in need of disabling the button when the action should be disabled --}}
-<button class='schedule-action__button btn' disabled={{disabled}}  onclick={{toggle 'showModal' this}}>
+{{!-- <button class='schedule-action__button btn' disabled={{disabled}}  onclick={{toggle 'showModal' this}}>
     {{navi-icon 'clock-o' class='schedule-action__icon'}}
     {{#if hasBlock}}
         <span class='schedule-action__icon-label'>{{yield}}</span>
     {{/if}}
 </button>
-
+ --}}
 {{#navi-modal
     isShown=showModal
     onClose=(action this.attrs.onRevert localDeliveryRule)
