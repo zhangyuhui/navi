@@ -2,31 +2,37 @@
  * Copyright 2017, Yahoo Holdings Inc.
  * Licensed under the terms of the MIT license. See accompanying LICENSE.md file for terms.
  */
-import Ember from 'ember';
+import { isEmpty } from '@ember/utils';
+
+import { computed } from '@ember/object';
+import { A } from '@ember/array';
+import { all } from 'rsvp';
+import Service, { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import DS from 'ember-data';
 import _ from 'lodash';
 import { v1 } from 'ember-uuid';
 
-const { get } = Ember;
-
-export default Ember.Service.extend({
+export default Service.extend({
   /**
    * @property {Ember.Service} bardFacts
    */
-  bardFacts: Ember.inject.service(),
+  bardFacts: service(),
 
   /**
    * @property {Ember.Service} store
    */
-  store: Ember.inject.service(),
+  store: service(),
 
   /**
    * @property {Object} widgetOptions - options for the fact request
    */
-  widgetOptions: {
-    page: 1,
-    perPage: 10000
-  },
+  widgetOptions: computed(function() {
+    return {
+      page: 1,
+      perPage: 10000
+    };
+  }),
 
   /**
    * @method fetchDataForDashboard
@@ -65,7 +71,7 @@ export default Ember.Service.extend({
         });
 
       result[get(widget, 'id')] = DS.PromiseArray.create({
-        promise: Ember.RSVP.all(widgetDataPromises).then(Ember.A) // PromiseArray expects an Ember array returned
+        promise: all(widgetDataPromises).then(A) // PromiseArray expects an Ember array returned
       });
     });
 
@@ -80,7 +86,7 @@ export default Ember.Service.extend({
    * @returns {Object} transformed version of request
    */
   _decorate(decorators, request) {
-    if (Ember.isEmpty(decorators)) {
+    if (isEmpty(decorators)) {
       return request;
     } else {
       return _.flow(...decorators)(request);
