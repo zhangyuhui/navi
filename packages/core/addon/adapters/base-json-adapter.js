@@ -11,6 +11,32 @@ import { pluralize } from 'ember-inflector';
 
 export default DS.JSONAPIAdapter.extend({
   /**
+   * Query the store and apply the needed filter syntax for filter query params
+   *
+   * @override
+   * @param {DS.Store} store
+   * @param {DS.Model} type
+   * @param {Object} query
+   * @param {DS.AdapterPopulatedRecordArray} recordArray
+   * @return {Promise} - promise that resolves to the response
+   */
+  query(store, type, query, recordArray) {
+    if (get(query, 'filter')) {
+      const filterKeys = Object.keys(query.filter);
+      const modelName = pluralize(camelize(get(type, 'modelName')));
+      let newQuery = Object.assign({}, query, { filter: {} });
+
+      filterKeys.forEach(key => {
+        newQuery.filter[`${modelName}.${key}`] = query.filter[key];
+      });
+
+      return this._super(store, type, newQuery, recordArray);
+    }
+
+    return this._super(...arguments);
+  },
+
+  /**
    * @property {String} host - persistence WS host
    */
   host: computed(function() {

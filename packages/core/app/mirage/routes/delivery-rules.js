@@ -1,8 +1,11 @@
 import moment from 'moment';
 import Response from 'ember-cli-mirage/response';
 import RESPONSE_CODES from '../enums/response-codes';
+import { getProperties } from '@ember/object';
+import { camelize } from '@ember/string';
 
 const TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+const FILTER_REGEX = /^filter\[deliveryRules\.(.+?)\]$/;
 
 export default function() {
   /**
@@ -19,16 +22,31 @@ export default function() {
    * deliveryrules/ - GET endpoint to fetch many deliveryrules
    */
   this.get('/deliveryRules', function({ deliveryRules }, request) {
-    let idFilter = request.queryParams['filter[delivery-rules.id]'],
-      rules = deliveryRules;
+    let idFilter = request.queryParams['filter[deliveryRules.id]'];
+    const filterKeys = Object.keys(request.queryParams).filter(key => key.startsWith('filter'));
+    const filters = {};
 
-    // Allow filtering
+    filterKeys.forEach(key => (filters[generateFilterKey(key)] = request.queryParams[key]));
+
+    // Just filter on id if it's present
     if (idFilter) {
       let ids = idFilter.split(',');
-      rules = deliveryRules.find(ids);
+      return deliveryRules.find(ids);
     }
 
-    return rules;
+    // Use other filters if there's no id filter
+    if (filters) {
+      //Need to transform values to strings before comparing
+      const newFilterKeys = Object.keys(filters);
+
+      return deliveryRules.where(rule => {
+        const ruleProps = getProperties(rule, newFilterKeys);
+
+        return newFilterKeys.every(key => ruleProps[key].toString() === filters[key]);
+      });
+    }
+
+    return deliveryRules.all();
   });
 
   /**
@@ -79,4 +97,18 @@ export default function() {
     deliveryRule.destroy();
     return new Response(RESPONSE_CODES.NO_CONTENT);
   });
+}
+
+/**
+ * Camelize keys extracted from query params and
+ * handle special case of deliveredItemId due to mirage storing
+ * polymorphic model id's as an object by grabbing the id from the object
+ * e.g."filter[deliveryRules.deliveredItem.id]" ==> "deliveredItemId.id"
+ *
+ * @param {String} key
+ */
+function generateFilterKey(key) {
+  let camelCaseKey = camelize(FILTER_REGEX.exec(key)[1]);
+
+  return camelCaseKey === 'deliveredItemId' ? 'deliveredItemId.id' : camelCaseKey;
 }

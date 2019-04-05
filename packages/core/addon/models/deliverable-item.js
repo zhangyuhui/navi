@@ -4,12 +4,11 @@
  */
 
 import DS from 'ember-data';
-import { A as arr } from '@ember/array';
 import { computed, get } from '@ember/object';
 
 export default DS.Model.extend({
-  deliveryRules: DS.hasMany('deliveryRule', {
-    async: true,
+  deliveryRules: DS.belongsTo('deliveryRule', {
+    async: false,
     inverse: 'deliveredItem'
   }),
 
@@ -24,12 +23,25 @@ export default DS.Model.extend({
    * @property {DS.Model} deliveryRuleForUser - delivery rule model
    */
   deliveryRuleForUser: computed('user', 'deliveryRules.[]', function() {
+    return get(this, 'deliveryRules');
+  }),
+
+  /**
+   * @returns {Promise} - resolves to when response from webservice is received
+   */
+  loadDeliveryRuleForUser() {
     let userId = get(get(this, 'user').getUser(), 'id');
 
-    return DS.PromiseObject.create({
-      promise: get(this, 'deliveryRules').then(rules =>
-        arr(rules.filter(rule => rule.get('owner.id') === userId)).get('firstObject')
-      )
-    });
-  })
+    return this.store
+      .query('deliveryRule', {
+        filter: {
+          'owner.id': userId,
+          'deliveredItem.id': get(this, 'modelId'),
+          deliveryType: get(this, 'constructor.modelName')
+        }
+      })
+      .then(rules => {
+        return rules[0] || null;
+      });
+  }
 });

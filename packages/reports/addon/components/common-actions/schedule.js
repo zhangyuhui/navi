@@ -10,6 +10,7 @@
  * }}
  */
 
+import { alias } from '@ember/object/computed';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import layout from '../../templates/components/common-actions/schedule';
@@ -41,18 +42,25 @@ export default Component.extend({
    */
   naviNotifications: service(),
 
+  didReceiveAttrs() {
+    get(this, 'model.loadDeliveryRuleForUser')();
+    return this._super(...arguments);
+  },
+
   /**
    * @property {DS.Model} deliveryRule - deliveryRule for the current user
    */
-  deliveryRule: computed('model.deliveryRuleForUser.isFulfilled', function() {
+  deliveryRule: computed('model.deliveryRuleForUser', function() {
+    debugger;
     return get(this, 'model.deliveryRuleForUser');
   }),
 
   /**
    * @property {DS.Model} localDeliveryRule - Model that stores the values of the modal's fields
    */
-  localDeliveryRule: computed('deliveryRule', function() {
-    return get(this, 'deliveryRule.content') || this._createNewDeliveryRule();
+  localDeliveryRule: computed('deliveryRule', async function() {
+    debugger;
+    return get(this, 'deliveryRule') || this._createNewDeliveryRule();
   }),
 
   /**
@@ -81,7 +89,7 @@ export default Component.extend({
   /**
    * @property {Boolean} isRuleValid
    */
-  isRuleValid: computed.alias('localDeliveryRule.validations.isValid'),
+  isRuleValid: alias('localDeliveryRule.validations.isValid'),
 
   /**
    * @property {Boolean} disableSave
