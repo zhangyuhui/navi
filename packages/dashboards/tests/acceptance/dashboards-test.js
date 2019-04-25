@@ -187,6 +187,9 @@ module('Acceptance | Dashboards', function(hooks) {
       `/reports/4`,
       'Selecting a report assigns the route `/reports/${id}` to the primary button where id is the id of the report'
     );
+
+    // Clean up
+    await click($('button:contains(Cancel)')[0]);
   });
 
   test('Delete a dashboard', async function(assert) {
@@ -247,9 +250,7 @@ module('Acceptance | Dashboards', function(hooks) {
     assert.expect(1);
 
     // Mock server path endpoint to mock failure
-    server.patch('/users/:id', () => {
-      return new Response(500);
-    });
+    server.patch('/users/:id', () => new Response(500));
 
     /* == mark dashboard as favorite == */
     await visit('/dashboards/3');
@@ -296,9 +297,7 @@ module('Acceptance | Dashboards', function(hooks) {
   test('clone dashboard on failure', async function(assert) {
     assert.expect(1);
 
-    server.post('/dashboards/', () => {
-      return new Response(500);
-    });
+    server.post('/dashboards/', () => new Response(500));
 
     await visit('/dashboards/2');
 
@@ -351,9 +350,7 @@ module('Acceptance | Dashboards', function(hooks) {
   test('Failing to save a new widget', async function(assert) {
     assert.expect(2);
 
-    server.patch('/dashboards/1', () => {
-      return new Response(500);
-    });
+    server.patch('/dashboards/1', () => new Response(500));
 
     // Create and save
     await visit('/dashboards/1/widgets/new');

@@ -3,7 +3,6 @@
  * Licensed under the terms of the MIT license. See accompanying LICENSE.md file for terms.
  */
 import { isEmpty } from '@ember/utils';
-
 import { computed } from '@ember/object';
 import { A } from '@ember/array';
 import { all } from 'rsvp';
