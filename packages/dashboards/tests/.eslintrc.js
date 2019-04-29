@@ -9,6 +9,7 @@ module.exports = {
     visitWithoutWait: true,
     waitForElement: true,
     server: true,
-    wait: true
+    wait: true,
+    Promise: true
   }
 };
