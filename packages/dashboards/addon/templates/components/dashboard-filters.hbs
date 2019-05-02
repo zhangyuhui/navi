@@ -1,0 +1,9 @@
+<div class="dashboard-filters__expand-button" role="button" onclick={{action (toggle "isCollapsed" this)}}>
+  {{navi-icon "sliders"}} Settings {{navi-icon (if isCollapsed "angle-right" "angle-down")}}
+</div>
+
+{{#if isCollapsed}}
+  {{dashboard-filters-collapsed dashboard=dashboard}}
+{{else}}
+  {{dashboard-filters-expanded dashboard=dashboard}}
+{{/if}}
